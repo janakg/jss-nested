@@ -18,9 +18,9 @@ a [separate rule](http://jsstyles.github.io/jss-examples/plugins/jss-nested/simp
 import jss from 'jss'
 import nested from 'jss-nested'
 
-jss.use(nested)
+jss.use(nested())
 
-const styleSheet = jss.createStyleSheet({
+let sheet = jss.createStyleSheet({
   container: {
     padding: '20px',
     '&:hover': {
@@ -40,7 +40,7 @@ const styleSheet = jss.createStyleSheet({
 ```
 
 ```javascript
-console.log(styleSheet.toString())
+console.log(sheet.toString())
 ```
 ```css
 .jss-0-0 {
@@ -61,12 +61,11 @@ console.log(styleSheet.toString())
 ```
 
 ```javascript
-console.log(styleSheet.classes)
+console.log(sheet.classes)
 ```
 ```javascript
 { container: "jss-0-0" }
 ```
-
 
 ## Run tests
 
@@ -74,7 +73,6 @@ console.log(styleSheet.classes)
 npm i
 npm run test
 ```
-
 
 ## License
 
