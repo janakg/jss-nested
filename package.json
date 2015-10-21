@@ -1,7 +1,7 @@
 {
   "name": "jss-nested",
   "description": "JSS plugin that enables support for nested selectors",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Oleg Slobodskoi",
     "email": "oleg008@gmail.com"
@@ -46,6 +46,6 @@
     "webpack": "^1.11.0"
   },
   "peerDependencies": {
-    "jss": "^>=3.0.0 < 4.0.0"
+    "jss": ">=3.0.0 < 4.0.0"
   }
 }
