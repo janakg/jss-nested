@@ -69,7 +69,7 @@ console.log(sheet.classes)
 
 ## Issues
 
-File a bug against [jsstyles/jss prefixed with \[jss-nested\]](https://github.com/isaacs/github/issues/new?title=[jss-nested]%20).
+File a bug against [jsstyles/jss prefixed with \[jss-nested\]](https://github.com/jsstyles/jss-nested/issues/new?title=[jss-nested]%20).
 
 ## Run tests
 
