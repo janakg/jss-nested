@@ -67,6 +67,10 @@ console.log(sheet.classes)
 { container: "jss-0-0" }
 ```
 
+## Issues
+
+File a bug against [jsstyles/jss prefixed with \[jss-nested\]](https://github.com/jsstyles/jss/issues/new?title=[jss-nested]%20).
+
 ## Run tests
 
 ```bash
