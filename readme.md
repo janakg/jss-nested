@@ -4,9 +4,9 @@
 
 Put an `&` before a selector within a rule and it will be
 replaced by the parent selector and extracted to
-a [separate rule](http://jsstyles.github.io/jss-examples/plugins/jss-nested/simple/index.html).
+a [separate rule](http://jsstyles.github.io/examples/plugins/jss-nested/simple/index.html).
 
-[Demo](http://jsstyles.github.io/jss-examples/index.html#plugin-jss-nested) -
+[Demo](http://jsstyles.github.io/examples/index.html#plugin-jss-nested) -
 [JSS](https://github.com/jsstyles/jss)
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jsstyles/jss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -20,7 +20,7 @@ import nested from 'jss-nested'
 
 jss.use(nested())
 
-let sheet = jss.createStyleSheet({
+const sheet = jss.createStyleSheet({
   container: {
     padding: '20px',
     '&:hover': {
