@@ -59,7 +59,6 @@ test('multi nesting in one selector', function () {
   equal(sheet.toString(), 'a {\n  float: left;\n}\nab, ac {\n  float: left;\n}')
 })
 
-
 test('deep nesting', function () {
   var sheet = jss.createStyleSheet({
     a: {
@@ -91,11 +90,7 @@ test('addRules', function () {
       }
     }
   })
-  sheet.attach()
-  equal(sheet.element.sheet.rules[0].cssText, 'a { height: 1px; }')
-  equal(sheet.element.sheet.rules[1].cssText, 'b { height: 2px; }')
-  equal(sheet.element.sheet.rules[2].cssText, 'b c { height: 3px; }')
-  sheet.detach()
+  equal(sheet.toString(), 'a {\n  height: 1px;\n}\nb {\n  height: 2px;\n}\nb c {\n  height: 3px;\n}')
 })
 
 test('nesting in a namespaced rule', function () {
@@ -106,7 +101,25 @@ test('nesting in a namespaced rule', function () {
       '& b': {float: 'left'}
     }
   })
-  ok(sheet.rules['.jss-0-0'])
-  ok(sheet.rules['.jss-0-0 b'])
-  equal(sheet.toString(), '.jss-0-0 {\n  float: left;\n}\n.jss-0-0 b {\n  float: left;\n}')
+  ok(sheet.rules['.a--jss-0-0'])
+  ok(sheet.rules['.a--jss-0-0 b'])
+  equal(sheet.toString(), '.a--jss-0-0 {\n  float: left;\n}\n.a--jss-0-0 b {\n  float: left;\n}')
+})
+
+test('nesting in a conditional namespaced rule', function () {
+  jss.uid.reset()
+  var sheet = jss.createStyleSheet({
+    a: {
+      color: 'green'
+    },
+    '@media': {
+      a: {
+        '&:hover': {color: 'red'}
+      }
+    }
+  })
+  console.log(sheet.rules)
+  ok(sheet.rules['.a--jss-0-0'])
+  ok(sheet.rules['@media'])
+  equal(sheet.toString(), '.a--jss-0-0 {\n  color: green;\n}\n@media {\n  .a--jss-0-0 {\n    color: red;\n  }\n}')
 })

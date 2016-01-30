@@ -1,4 +1,4 @@
-const regExp = /&/gi
+const regExp = /&/g
 
 /**
  * Convert nested rules to separate, remove them from original styles.
@@ -9,13 +9,13 @@ const regExp = /&/gi
 export default function jssNested() {
   return rule => {
     if (rule.type !== 'regular') return
-    let {sheet, jss} = rule.options
-    let container = sheet || jss
+    const {sheet, jss} = rule.options
+    const container = sheet || jss
     let {options} = rule
-    for (let prop in rule.style) {
+    for (const prop in rule.style) {
       if (prop[0] === '&') {
         if (options.named) options = {...options, named: false}
-        let selector = prop.replace(regExp, rule.selector)
+        const selector = prop.replace(regExp, rule.selector)
         container.createRule(selector, rule.style[prop], options)
         delete rule.style[prop]
       }
