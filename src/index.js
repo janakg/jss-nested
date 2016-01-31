@@ -9,14 +9,19 @@ const regExp = /&/g
 export default function jssNested() {
   return rule => {
     if (rule.type !== 'regular') return
-    const {sheet, jss} = rule.options
-    const container = sheet || jss
-    let {options} = rule
+    const {sheet, jss, parent} = rule.options
+    let container = sheet || jss
+    let options
+
+    if (parent && parent.type === 'conditional') {
+      container = parent
+    }
+
     for (const prop in rule.style) {
       if (prop[0] === '&') {
-        if (options.named) options = {...options, named: false}
-        const selector = prop.replace(regExp, rule.selector)
-        container.createRule(selector, rule.style[prop], options)
+        if (!options) options = {...rule.options, named: false}
+        const name = prop.replace(regExp, rule.selector)
+        container.createRule(name, rule.style[prop], options)
         delete rule.style[prop]
       }
     }

@@ -62,7 +62,9 @@ test('multi nesting in one selector', function () {
 test('deep nesting', function () {
   var sheet = jss.createStyleSheet({
     a: {
+      float: 'left',
       '&b': {
+        float: 'left',
         '&c': {
           float: 'left'
         }
@@ -72,7 +74,7 @@ test('deep nesting', function () {
   ok(sheet.rules.a)
   ok(sheet.rules.ab)
   ok(sheet.rules.abc)
-  equal(sheet.toString(), 'a {\n}\nab {\n}\nabc {\n  float: left;\n}')
+  equal(sheet.toString(), 'a {\n  float: left;\n}\nab {\n  float: left;\n}\nabc {\n  float: left;\n}')
 })
 
 test('addRules', function () {
@@ -118,8 +120,7 @@ test('nesting in a conditional namespaced rule', function () {
       }
     }
   })
-  console.log(sheet.rules)
   ok(sheet.rules['.a--jss-0-0'])
   ok(sheet.rules['@media'])
-  equal(sheet.toString(), '.a--jss-0-0 {\n  color: green;\n}\n@media {\n  .a--jss-0-0 {\n    color: red;\n  }\n}')
+  equal(sheet.toString(), '.a--jss-0-0 {\n  color: green;\n}\n@media {\n  .a--jss-0-0:hover {\n    color: red;\n  }\n}')
 })
