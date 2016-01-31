@@ -1,3 +1,13 @@
+## 1.0.2 / 2016-01-31
+
+- docs
+- update linter and lint
+- fix nested rules within conditionals
+
+## 1.0.1 / 2015-10-21
+
+- fix peer dependency
+
 ## 1.0.0 / 2015-10-19
 
 - support jss 3.0
