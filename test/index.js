@@ -2,7 +2,7 @@
 
 QUnit.module('Nested rules plugin', {
   setup: function () {
-    jss.use(jssNested())
+    jss.use(jssNested.default())
   },
   teardown: function () {
     jss.plugins.registry = []
