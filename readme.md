@@ -4,12 +4,12 @@
 
 Put an `&` before a selector within a rule and it will be
 replaced by the parent selector and extracted to
-a [separate rule](http://jsstyles.github.io/examples/plugins/jss-nested/simple/index.html).
+a [separate rule](http://cssinjs.github.io/examples/plugins/jss-nested/simple/index.html).
 
-[Demo](http://jsstyles.github.io/examples/index.html#plugin-jss-nested) -
-[JSS](https://github.com/jsstyles/jss)
+[Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
+[JSS](https://github.com/cssinjs/jss)
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jsstyles/jss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
 
 
 ## Usage example
@@ -69,7 +69,7 @@ console.log(sheet.classes)
 
 ## Issues
 
-File a bug against [jsstyles/jss prefixed with \[jss-nested\]](https://github.com/jsstyles/jss/issues/new?title=[jss-nested]%20).
+File a bug against [cssinjs/jss prefixed with \[jss-nested\]](https://github.com/cssinjs/jss/issues/new?title=[jss-nested]%20).
 
 ## Run tests
 
