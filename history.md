@@ -1,3 +1,8 @@
+## 2.0.0 / 2016-07-31
+
+- implelent local refs using $ref syntax #214
+- update deps
+
 ## 1.0.3 / 2016-03-24
 
 - update babel deps

@@ -1,5 +1,7 @@
 'use strict'
 
+var jss = window.jss.default
+
 QUnit.module('Nested rules plugin', {
   setup: function () {
     jss.use(jssNested.default())
@@ -96,20 +98,18 @@ test('addRules', function () {
 })
 
 test('nesting in a namespaced rule', function () {
-  jss.uid.reset()
   var sheet = jss.createStyleSheet({
     a: {
       float: 'left',
       '& b': {float: 'left'}
     }
   })
-  ok(sheet.rules['.a--jss-0-0'])
-  ok(sheet.rules['.a--jss-0-0 b'])
-  equal(sheet.toString(), '.a--jss-0-0 {\n  float: left;\n}\n.a--jss-0-0 b {\n  float: left;\n}')
+  ok(sheet.rules['.a-3182562902'])
+  ok(sheet.rules['.a-3182562902 b'])
+  equal(sheet.toString(), '.a-3182562902 {\n  float: left;\n}\n.a-3182562902 b {\n  float: left;\n}')
 })
 
 test('nesting in a conditional namespaced rule', function () {
-  jss.uid.reset()
   var sheet = jss.createStyleSheet({
     a: {
       color: 'green'
@@ -120,7 +120,32 @@ test('nesting in a conditional namespaced rule', function () {
       }
     }
   })
-  ok(sheet.rules['.a--jss-0-0'])
+  ok(sheet.rules['.a-460900105'])
   ok(sheet.rules['@media'])
-  equal(sheet.toString(), '.a--jss-0-0 {\n  color: green;\n}\n@media {\n  .a--jss-0-0:hover {\n    color: red;\n  }\n}')
+  equal(sheet.toString(), '.a-460900105 {\n  color: green;\n}\n@media {\n  .a-460900105:hover {\n    color: red;\n  }\n}')
+})
+
+test('local rule ref', function () {
+  var sheet = jss.createStyleSheet({
+    a: {
+      float: 'left',
+      '& $b': {float: 'left'}
+    },
+    b: {
+      color: 'red'
+    }
+  })
+
+  var css = '' +
+    '.a-2101561448 {\n' +
+    '  float: left;\n' +
+    '}\n' +
+    '.b-3645560457 {\n' +
+    '  color: red;\n' +
+    '}\n' +
+    '.a-2101561448 .b-3645560457 {\n' +
+    '  float: left;\n' +
+    '}'
+
+  equal(sheet.toString(), css)
 })
