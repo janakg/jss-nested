@@ -6,6 +6,8 @@ Put an `&` before a selector within a rule and it will be
 replaced by the parent selector and extracted to
 a [separate rule](http://cssinjs.github.io/examples/plugins/jss-nested/simple/index.html).
 
+You can also reference a local rule within the style sheet by using `$ruleName`.
+
 [Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
 [JSS](https://github.com/cssinjs/jss)
 
@@ -26,15 +28,25 @@ const sheet = jss.createStyleSheet({
     '&:hover': {
       background: 'blue'
     },
+    // Add a global .clear class to the container.
     '&.clear': {
       clear: 'both'
     },
+    // Reference a global .button scoped to the container.
     '& .button': {
       background: 'red'
     },
+    // Use multiple container refs in one selector
     '&.selected, &.active': {
       border: '1px solid red'
+    },
+    // Reference the local rule "button".
+    '& $button': {
+      padding: '10px'
     }
+  },
+  button: {
+    color: 'red'
   }
 })
 ```
@@ -43,20 +55,26 @@ const sheet = jss.createStyleSheet({
 console.log(sheet.toString())
 ```
 ```css
-.jss-0-0 {
+.container-12345 {
   padding: 20px;
 }
-.jss-0-0:hover {
+.container-12345:hover {
   background: blue;
 }
-.jss-0-0.clear {
+.container-12345.clear {
   clear: both;
 }
-.jss-0-0 .button {
+.container-12345 .button {
   background: red;
 }
-.jss-0-0.selected, .jss-0-0.active {
+.container-12345.selected, .container-12345.active {
   border: 1px solid red;
+}
+.button-12341 {
+  color: red;
+}
+.container-12345 .button-12341 {
+  padding: 10px;
 }
 ```
 
