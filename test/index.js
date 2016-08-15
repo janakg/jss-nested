@@ -140,11 +140,11 @@ test('local rule ref', function () {
     '.a-2101561448 {\n' +
     '  float: left;\n' +
     '}\n' +
-    '.b-3645560457 {\n' +
-    '  color: red;\n' +
-    '}\n' +
     '.a-2101561448 .b-3645560457 {\n' +
     '  float: left;\n' +
+    '}\n' +
+    '.b-3645560457 {\n' +
+    '  color: red;\n' +
     '}'
 
   equal(sheet.toString(), css)
