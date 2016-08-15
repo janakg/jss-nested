@@ -45,7 +45,11 @@ export default function jssNested() {
           // Replace all $ref.
           .replace(refRegExp, replaceRef)
 
-        container.createRule(name, rule.style[prop], options)
+        // Conditional rule has no `.addRule()`.
+        // Use `.addRule()` in regular rules to render a nested rule
+        // when a sheet is attached.
+        const method = container.addRule ? 'addRule' : 'createRule'
+        container[method](name, rule.style[prop], options)
         delete rule.style[prop]
       }
     }

@@ -1,3 +1,7 @@
+## 2.1.0 / 2016-08-15
+
+- allow `sheet.addRule` on attached sheet use nested rules
+
 ## 2.0.0 / 2016-07-31
 
 - implelent local refs using $ref syntax #214
