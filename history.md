@@ -1,3 +1,7 @@
+## 2.2.0 / 2016-08-16
+
+- migrate to mocha
+
 ## 2.1.0 / 2016-08-15
 
 - allow `sheet.addRule` on attached sheet use nested rules
