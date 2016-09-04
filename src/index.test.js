@@ -233,7 +233,9 @@ describe('jss-nested', () => {
 
       expect(warning).to.be('[JSS] Nesting is too deep "& .b".')
     })
+  })
 
+  describe('local refs', () => {
     it('should generate correct CSS', () => {
       const sheet = jss.createStyleSheet({
         a: {
