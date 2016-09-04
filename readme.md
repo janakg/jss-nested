@@ -1,30 +1,19 @@
 ![JSS logo](https://avatars1.githubusercontent.com/u/9503099?v=3&s=60)
-
-## JSS plugin that enables support for nested selectors
-
-Put an `&` before a selector within a rule and it will be
-replaced by the parent selector and extracted to
-a [separate rule](http://cssinjs.github.io/examples/plugins/jss-nested/simple/index.html).
-
-You can also reference a local rule within the style sheet by using `$ruleName`.
-
-[Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
-[JSS](https://github.com/cssinjs/jss)
-
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
 
+## JSS plugin enables support for nested rules
 
-## Usage example
+[Live example](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
+[JSS](https://github.com/cssinjs/jss)
+
+### Use `&` to reference selector of the parent rule.
+
+#### Example
 
 ```javascript
-import jss from 'jss'
-import nested from 'jss-nested'
-
-jss.use(nested())
-
 const sheet = jss.createStyleSheet({
   container: {
-    padding: '20px',
+    padding: 20,
     '&:hover': {
       background: 'blue'
     },
@@ -39,51 +28,76 @@ const sheet = jss.createStyleSheet({
     // Use multiple container refs in one selector
     '&.selected, &.active': {
       border: '1px solid red'
-    },
-    // Reference the local rule "button".
-    '& $button': {
-      padding: '10px'
     }
-  },
-  button: {
-    color: 'red'
   }
 })
 ```
 
-```javascript
-console.log(sheet.toString())
-```
 ```css
-.container-12345 {
+.container-3775999496 {
   padding: 20px;
 }
-.container-12345:hover {
+.container-3775999496:hover {
   background: blue;
 }
-.container-12345.clear {
+.container-3775999496.clear {
   clear: both;
 }
-.container-12345 .button {
+.container-3775999496 .button {
   background: red;
 }
-.container-12345.selected, .container-12345.active {
+.container-3775999496.selected, .container-3775999496.active {
   border: 1px solid red;
-}
-.button-12341 {
-  color: red;
-}
-.container-12345 .button-12341 {
-  padding: 10px;
 }
 ```
 
+### Use `$ruleName` to reference a local rule within the same style sheet.
+
+#### Example
+
 ```javascript
-console.log(sheet.classes)
+const sheet = jss.createStyleSheet({
+  container: {
+    // Reference the local rule "button".
+    '& $button': {
+      padding: '10px'
+    },
+    '&:hover $button, &:active $button': {
+      color: 'red',
+    },
+    '&:focus $button': {
+      color: 'blue'
+    }
+  },
+  button: {
+    color: 'grey'
+  }
+})
 ```
-```javascript
-{ container: "jss-0-0" }
+
+```css
+.button-3940538223 {
+  color: grey;
+}
+.container-2645419599 .button-3940538223 {
+  padding: 10px;
+}
+.container-2645419599:hover .button-3940538223, .container-2645419599:active .button-3940538223 {
+  color: red;
+}
+.container-2645419599:focus .button-3940538223 {
+  color: blue;
+}
 ```
+
+### Deep nesting
+
+Deep nesting is not supported for multiple reasons:
+
+1. More than 2 levels of indentation lead to less readability in our experience.
+2. JSS was created for the component driven development in the first place. Components should never be big and so there should be no need for deep nesting.
+
+If you can provide a real life example where you really __need__ deep nesting - we would love to know it.
 
 ## Issues
 

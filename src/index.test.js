@@ -2,8 +2,10 @@ import expect from 'expect.js'
 import nested from './index'
 import {create} from 'jss'
 
+const noWarn = message => expect(message).to.be(undefined)
+
 describe('jss-nested', () => {
-  const jss = create().use(nested())
+  const jss = create().use(nested({warn: noWarn}))
 
   describe('nesting with space', () => {
     const sheet = jss.createStyleSheet({
@@ -110,41 +112,6 @@ describe('jss-nested', () => {
     })
   })
 
-  describe('deep nesting', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '&b': {
-          float: 'left',
-          '&c': {
-            float: 'left'
-          }
-        }
-      }
-    }, {named: false})
-
-    it('should add rules', () => {
-      expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('ab')).to.not.be(undefined)
-      expect(sheet.getRule('abc')).to.not.be(undefined)
-    })
-
-    it('should generate correct CSS', () => {
-      expect(sheet.toString()).to.be(
-        'a {\n' +
-        '  float: left;\n' +
-        '}\n' +
-        'ab {\n' +
-        '  float: left;\n' +
-        '}\n' +
-        'abc {\n' +
-        '  float: left;\n' +
-        '}'
-      )
-    })
-  })
-
-
   describe('.addRules()', () => {
     const sheet = jss.createStyleSheet({
       a: {
@@ -232,18 +199,52 @@ describe('jss-nested', () => {
     })
   })
 
-  describe('nesting in a conditional namespaced rule', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '& $b': {float: 'left'}
-      },
-      b: {
-        color: 'red'
-      }
+  describe('warnings', () => {
+    let jss, warning
+
+    beforeEach(() => {
+      const warn = message => warning = message
+      jss = create().use(nested({warn}))
+    })
+
+    afterEach(() => {
+      warning = null
+    })
+
+    it('should warn when referenced rule is not found', () => {
+      jss.createStyleSheet({
+        a: {
+          '& $b': {float: 'left'}
+        }
+      })
+
+      expect(warning).to.be('[JSS] Could not find the referenced rule "b".')
+    })
+
+    it('should warn when nesting is too deep', () => {
+      jss.createStyleSheet({
+        a: {
+          '& .a': {
+            float: 'left',
+            '& .b': {float: 'left'}
+          }
+        }
+      })
+
+      expect(warning).to.be('[JSS] Nesting is too deep "& .b".')
     })
 
     it('should generate correct CSS', () => {
+      const sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '& $b': {float: 'left'}
+        },
+        b: {
+          color: 'red'
+        }
+      })
+
       expect(sheet.toString()).to.be(
         '.a-2101561448 {\n' +
         '  float: left;\n' +
