@@ -1,14 +1,12 @@
 ![JSS logo](https://avatars1.githubusercontent.com/u/9503099?v=3&s=60)
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
 
 ## JSS plugin enables support for nested rules
 
-[Live example](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
+[Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
 [JSS](https://github.com/cssinjs/jss)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
 
 ### Use `&` to reference selector of the parent rule.
-
-#### Example
 
 ```javascript
 const sheet = jss.createStyleSheet({
@@ -53,8 +51,6 @@ const sheet = jss.createStyleSheet({
 
 ### Use `$ruleName` to reference a local rule within the same style sheet.
 
-#### Example
-
 ```javascript
 const sheet = jss.createStyleSheet({
   container: {
@@ -62,6 +58,7 @@ const sheet = jss.createStyleSheet({
     '& $button': {
       padding: '10px'
     },
+    // Multiple local refs in one rule.
     '&:hover $button, &:active $button': {
       color: 'red',
     },
@@ -94,10 +91,10 @@ const sheet = jss.createStyleSheet({
 
 Deep nesting is not supported for multiple reasons:
 
-1. More than 2 levels of indentation lead to less readability in our experience.
-2. JSS was created for the component driven development in the first place. Components should never be big and so there should be no need for deep nesting.
+1. More than 2 levels of indentation lead to less readability from our experience.
+2. Components should never be big and so there should be no need for deep nesting.
 
-If you can provide a real life example where you really __need__ deep nesting - we would love to know it.
+If you can provide a real life example where you __really need__ deep nesting - we would love to know it.
 
 ## Issues
 
