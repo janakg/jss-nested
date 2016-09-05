@@ -1,4 +1,4 @@
-const warn = console.warn.bind(console) // eslint-disable-line no-console
+const consoleWarn = console.warn.bind(console) // eslint-disable-line no-console
 const parentRegExp = /&/g
 const refRegExp = /\$(\w+)/g
 
@@ -8,11 +8,11 @@ const refRegExp = /\$(\w+)/g
  * @param {Rule} rule
  * @api public
  */
-export default function jssNested({warn = warn} = {}) {
+export default function jssNested({warn = consoleWarn} = {}) {
   // Get a function to be used for $ref replacement.
-  function getReplaceRef(sheet) {
+  function getReplaceRef(container) {
     return (match, name) => {
-      const rule = sheet.getRule(name)
+      const rule = container.getRule(name)
       if (rule) return rule.selector
       warn(`[JSS] Could not find the referenced rule "${name}".`)
       return name
@@ -21,23 +21,21 @@ export default function jssNested({warn = warn} = {}) {
 
   return rule => {
     if (rule.type !== 'regular') return
-    const {sheet, jss, parent} = rule.options
-    let container = sheet || jss
+    const container = rule.options.parent
     let options
     let replaceRef
-
-    if (parent && parent.type === 'conditional') {
-      container = parent
-    }
+    let index
 
     for (const prop in rule.style) {
       if (prop[0] === '&') {
         if (!options) {
           let {level} = rule.options
           level = level === undefined ? 1 : level + 1
-          if (level > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
-          options = {...rule.options, named: false, level}
+          if (level > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
+          options = {...rule.options, named: false, level, index}
         }
+        index = (index === undefined ? container.indexOf(rule) : index) + 1
+        options.index = index
         // Lazily create the ref replacer function just once for all nested rules within
         // the sheet.
         if (!replaceRef) replaceRef = getReplaceRef(container)
@@ -48,11 +46,7 @@ export default function jssNested({warn = warn} = {}) {
           // Replace all $ref.
           .replace(refRegExp, replaceRef)
 
-        // Conditional rule has no `.addRule()`.
-        // Use `.addRule()` in regular rules to render a nested rule
-        // when a sheet is attached.
-        const method = container.addRule ? 'addRule' : 'createRule'
-        container[method](name, rule.style[prop], options)
+        container.addRule(name, rule.style[prop], options)
         delete rule.style[prop]
       }
     }

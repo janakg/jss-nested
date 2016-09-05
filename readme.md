@@ -92,7 +92,8 @@ const sheet = jss.createStyleSheet({
 Deep nesting is not supported for multiple reasons:
 
 1. More than 2 levels of indentation lead to less readability from our experience.
-2. Components should never be big and so there should be no need for deep nesting.
+1. Components should never be big and so there should be no need for deep nesting.
+1. Even if they are big, deep nesting shouldn't be needed. Class names can be switched on nodes for different states.
 
 If you can provide a real life example where you __really need__ deep nesting - we would love to know it.
 
