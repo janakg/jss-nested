@@ -1,12 +1,9 @@
-## 2.3.0 / 2016-09-05
+## 2.2.0 / 2016-09-05
 
 - upgrade jss to 5.5.0
 - fix the order of extracted nested rules
-- deprecate nesting level is higher than 1 (was never really supported)
+- deprecate nesting level is higher than 1 (was never fully supported)
 - warn if nesting level is too high
-
-## 2.2.0 / 2016-08-16
-
 - migrate to mocha
 
 ## 2.1.0 / 2016-08-15
