@@ -2,16 +2,26 @@ import expect from 'expect.js'
 import nested from './index'
 import {create} from 'jss'
 
+const noWarn = message => expect(message).to.be(undefined)
+
 describe('jss-nested', () => {
-  const jss = create().use(nested())
+  let jss
+
+  beforeEach(() => {
+    jss = create().use(nested({warn: noWarn}))
+  })
 
   describe('nesting with space', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '& b': {float: 'left'}
-      }
-    }, {named: false})
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '& b': {float: 'left'}
+        }
+      }, {named: false})
+    })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
@@ -31,12 +41,16 @@ describe('jss-nested', () => {
   })
 
   describe('nesting without space', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '&b': {float: 'left'}
-      }
-    }, {named: false})
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '&b': {float: 'left'}
+        }
+      }, {named: false})
+    })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
@@ -56,13 +70,17 @@ describe('jss-nested', () => {
   })
 
   describe('multi nesting', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '&b': {float: 'left'},
-        '& c': {float: 'left'}
-      }
-    }, {named: false})
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '&b': {float: 'left'},
+          '& c': {float: 'left'}
+        }
+      }, {named: false})
+    })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
@@ -86,12 +104,16 @@ describe('jss-nested', () => {
   })
 
   describe('multi nesting in one selector', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '&b, &c': {float: 'left'}
-      }
-    }, {named: false})
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '&b, &c': {float: 'left'}
+        }
+      }, {named: false})
+    })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
@@ -110,55 +132,24 @@ describe('jss-nested', () => {
     })
   })
 
-  describe('deep nesting', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '&b': {
-          float: 'left',
-          '&c': {
-            float: 'left'
+  describe('.addRules()', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          height: '1px'
+        }
+      }, {named: false})
+
+      sheet.addRules({
+        b: {
+          height: '2px',
+          '& c': {
+            height: '3px'
           }
         }
-      }
-    }, {named: false})
-
-    it('should add rules', () => {
-      expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('ab')).to.not.be(undefined)
-      expect(sheet.getRule('abc')).to.not.be(undefined)
-    })
-
-    it('should generate correct CSS', () => {
-      expect(sheet.toString()).to.be(
-        'a {\n' +
-        '  float: left;\n' +
-        '}\n' +
-        'ab {\n' +
-        '  float: left;\n' +
-        '}\n' +
-        'abc {\n' +
-        '  float: left;\n' +
-        '}'
-      )
-    })
-  })
-
-
-  describe('.addRules()', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        height: '1px'
-      }
-    }, {named: false})
-
-    sheet.addRules({
-      b: {
-        height: '2px',
-        '& c': {
-          height: '3px'
-        }
-      }
+      })
     })
 
     it('should generate correct CSS', () => {
@@ -177,11 +168,15 @@ describe('jss-nested', () => {
   })
 
   describe('nesting in a namespaced rule', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '& b': {float: 'left'}
-      }
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '& b': {float: 'left'}
+        }
+      })
     })
 
     it('should add rules', () => {
@@ -202,15 +197,19 @@ describe('jss-nested', () => {
   })
 
   describe('nesting in a conditional namespaced rule', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        color: 'green'
-      },
-      '@media': {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
         a: {
-          '&:hover': {color: 'red'}
+          color: 'green'
+        },
+        '@media': {
+          a: {
+            '&:hover': {color: 'red'}
+          }
         }
-      }
+      })
     })
 
     it('should add rules', () => {
@@ -232,15 +231,58 @@ describe('jss-nested', () => {
     })
   })
 
-  describe('nesting in a conditional namespaced rule', () => {
-    const sheet = jss.createStyleSheet({
-      a: {
-        float: 'left',
-        '& $b': {float: 'left'}
-      },
-      b: {
-        color: 'red'
+  describe('warnings', () => {
+    let localJss
+    let warning
+
+    beforeEach(() => {
+      const warn = message => {
+        warning = message
       }
+      localJss = create().use(nested({warn}))
+    })
+
+    afterEach(() => {
+      warning = null
+    })
+
+    it('should warn when referenced rule is not found', () => {
+      localJss.createStyleSheet({
+        a: {
+          '& $b': {float: 'left'}
+        }
+      })
+
+      expect(warning).to.be('[JSS] Could not find the referenced rule "b".')
+    })
+
+    it('should warn when nesting is too deep', () => {
+      localJss.createStyleSheet({
+        a: {
+          '& .a': {
+            float: 'left',
+            '& .b': {float: 'left'}
+          }
+        }
+      })
+
+      expect(warning).to.be('[JSS] Nesting is too deep "& .b".')
+    })
+  })
+
+  describe('local refs', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          float: 'left',
+          '& $b': {float: 'left'}
+        },
+        b: {
+          color: 'red'
+        }
+      })
     })
 
     it('should generate correct CSS', () => {
