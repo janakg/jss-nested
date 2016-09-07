@@ -175,6 +175,9 @@ describe('jss-nested', () => {
         a: {
           float: 'left',
           '& b': {float: 'left'}
+        },
+        c: {
+          float: 'left'
         }
       })
     })
@@ -182,6 +185,7 @@ describe('jss-nested', () => {
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
       expect(sheet.getRule('.a-3182562902 b')).to.not.be(undefined)
+      expect(sheet.getRule('c')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
@@ -190,6 +194,9 @@ describe('jss-nested', () => {
         '  float: left;\n' +
         '}\n' +
         '.a-3182562902 b {\n' +
+        '  float: left;\n' +
+        '}\n' +
+        '.c-3787690649 {\n' +
         '  float: left;\n' +
         '}'
       )

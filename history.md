@@ -1,3 +1,7 @@
+## 2.2.1 / 2016-09-07
+
+- don't use es6 in tests.webpack.js, because it is loaded from jss without babelifying
+
 ## 2.2.0 / 2016-09-05
 
 - upgrade jss to 5.5.0
