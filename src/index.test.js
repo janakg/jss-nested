@@ -1,5 +1,6 @@
 import expect from 'expect.js'
 import nested from './index'
+import jssExtend from 'jss-extend'
 import {create} from 'jss'
 
 const noWarn = message => expect(message).to.be(undefined)
@@ -238,6 +239,119 @@ describe('jss-nested', () => {
     })
   })
 
+  describe('nesting a conditional rule inside a regular rule', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          color: 'green',
+          '@media': {
+            width: '200px'
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('a')).to.not.be(undefined)
+      expect(sheet.getRule('@media')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.a-3036715211 {\n' +
+        '  color: green;\n' +
+        '}\n' +
+        '@media {\n' +
+        '  .a-3036715211 {\n' +
+        '    width: 200px;\n' +
+        '  }\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('merge nested conditional to container conditional', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          color: 'green',
+          '@media': {
+            width: '200px'
+          }
+        },
+        '@media': {
+          a: {
+            color: 'blue'
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('a')).to.not.be(undefined)
+      expect(sheet.getRule('@media')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.a-3036715211 {\n' +
+        '  color: green;\n' +
+        '}\n' +
+        '@media {\n' +
+        '  .a-3036715211 {\n' +
+        '    color: blue;\n' +
+        '    width: 200px;\n' +
+        '  }\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('merge nested conditional to container conditional with existing rule', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          color: 'green',
+          '@media': {
+            width: '200px'
+          }
+        },
+        '@media': {
+          b: {
+            color: 'blue'
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('a')).to.not.be(undefined)
+      expect(sheet.getRule('@media')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.a-3036715211 {\n' +
+        '  color: green;\n' +
+        '}\n' +
+        '@media {\n' +
+        '  .b-1243194637 {\n' +
+        '    color: blue;\n' +
+        '  }\n' +
+        '  .a-3036715211 {\n' +
+        '    width: 200px;\n' +
+        '  }\n' +
+        '}'
+      )
+    })
+  })
+
   describe('warnings', () => {
     let localJss
     let warning
@@ -302,6 +416,54 @@ describe('jss-nested', () => {
         '}\n' +
         '.b-3645560457 {\n' +
         '  color: red;\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('nesting conditionals in combination with extend plugin', () => {
+    let sheet
+    let localJss
+
+    beforeEach(() => {
+      localJss = create().use(jssExtend()).use(nested())
+      sheet = localJss.createStyleSheet({
+        button: {
+          color: 'green',
+          'background-color': 'aqua',
+          '@media': {
+            width: '200px'
+          }
+        },
+        'red-button': {
+          extend: 'button',
+          color: 'red'
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('button')).to.not.be(undefined)
+      expect(sheet.getRule('@media')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.button-148595348 {\n' +
+        '  color: green;\n' +
+        '  background-color: aqua;\n' +
+        '}\n' +
+        '.red-button-4175883671 {\n' +
+        '  color: red;\n' +
+        '  background-color: aqua;\n' +
+        '}\n' +
+        '@media {\n' +
+        '  .button-148595348 {\n' +
+        '    width: 200px;\n' +
+        '  }\n' +
+        '  .red-button-4175883671 {\n' +
+        '    width: 200px;\n' +
+        '  }\n' +
         '}'
       )
     })
