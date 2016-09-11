@@ -2,6 +2,10 @@
 
 ## JSS plugin enables support for nested rules
 
+Make sure you read [how to use
+plugins](https://github.com/cssinjs/jss/blob/master/docs/setup.md#setup-with-plugins)
+in general.
+
 [Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
 [JSS](https://github.com/cssinjs/jss)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
