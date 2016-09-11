@@ -8,11 +8,9 @@ a [separate rule](http://cssinjs.github.io/examples/plugins/jss-nested/simple/in
 
 You can also reference a local rule within the style sheet by using `$ruleName`.
 
-Before using this plugin you might want to read about [how to use this
-plugin](https://github.com/cssinjs/jss/blob/master/docs/setup.md#setup-with-plugins)
-or that [order of plugins does
-matter](https://github.com/cssinjs/jss/blob/master/docs/plugins.md#order-does-matter-here-is-the-right-one)
-unless you've already did.
+Make sure you read [how to use
+plugins](https://github.com/cssinjs/jss/blob/master/docs/setup.md#setup-with-plugins)
+in general.
 
 [Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
 [JSS](https://github.com/cssinjs/jss)
