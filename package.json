@@ -49,6 +49,7 @@
     "eslint-plugin-react": "^5.0.1",
     "expect.js": "^0.3.1",
     "jss": "^5.5.0",
+    "jss-extend": "^2.0.0",
     "karma": "^1.1.1",
     "karma-benchmark": "^0.6.0",
     "karma-benchmark-reporter": "^0.1.1",
