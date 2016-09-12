@@ -1,3 +1,7 @@
+## 2.3.0 / 2016-09-13
+
+- enable @media rules inside of regular rules
+
 ## 2.2.1 / 2016-09-07
 
 - don't use es6 in tests.webpack.js, because it is loaded from jss without babelifying
