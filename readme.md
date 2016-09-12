@@ -91,6 +91,30 @@ const sheet = jss.createStyleSheet({
 }
 ```
 
+### Use at-rules inside of regular rules.
+
+```javascript
+const sheet = jss.createStyleSheet({
+  button: {
+    color: 'red',
+    '@media (min-width: 1024px)': {
+      width: 200
+    }
+  }
+})
+```
+
+```css
+.button-2683044438 {
+  color: red;
+}
+@media (min-width: 1024px) {
+  .button-2683044438 {
+    width: 200px;
+  }
+}
+```
+
 ### Deep nesting
 
 Deep nesting is not supported for multiple reasons:
