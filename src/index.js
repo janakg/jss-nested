@@ -19,40 +19,30 @@ export default function jssNested({warn = consoleWarn} = {}) {
     }
   }
 
-  function addNestedRule(name, rule, container, options, replaceRef) {
-    const nameExtended = name
-      // Replace all & by the parent selector.
-      .replace(parentRegExp, rule.selector)
-      // Replace all $ref.
-      .replace(refRegExp, replaceRef)
-
-    container.addRule(nameExtended, rule.style[name], options)
-  }
-
-  function addNestedConditional(name, rule, container) {
-    const containerConditionalRule = container.getRule(name)
+  function addConditional(name, rule, container) {
+    const conditionalContainer = container.getRule(name)
 
     // Check if conditional rule already exists in container.
-    if (containerConditionalRule) {
-      // It exists, so now check if we have already defined styles
-      // for example @media print { .some-style { display: none; } } .
-      const ruleToExtend = containerConditionalRule.getRule(rule.name)
-
-      if (ruleToExtend) {
-        ruleToExtend.style = {
-          ...ruleToExtend.style,
-          ...rule.style[name]
-        }
-      }
-      else {
-        // Conditional rule in container has no rule so create it.
-        containerConditionalRule.addRule(rule.name, rule.style[name])
-      }
-    }
-    else {
+    if (!conditionalContainer) {
       // Add conditional to container because it does not exist yet.
       container.addRule(name, {[rule.name]: rule.style[name]})
+      return
     }
+
+    // It exists, so now check if we have already defined styles
+    // for example @media print { .some-style { display: none; } } .
+    const ruleToExtend = conditionalContainer.getRule(rule.name)
+
+    if (ruleToExtend) {
+      ruleToExtend.style = {
+        ...ruleToExtend.style,
+        ...rule.style[name]
+      }
+      return
+    }
+
+    // Conditional rule in container has no rule so create it.
+    conditionalContainer.addRule(rule.name, rule.style[name])
   }
 
   return rule => {
@@ -61,36 +51,38 @@ export default function jssNested({warn = consoleWarn} = {}) {
     let options
     let replaceRef
     let index
-    let isNestedRule
-    let isNestedConditional
-
 
     for (const prop in rule.style) {
-      isNestedRule = prop[0] === '&'
-      isNestedConditional = prop[0] === '@'
+      const isNested = prop[0] === '&'
+      const isNestedConditional = prop[0] === '@'
 
-      if (isNestedRule || isNestedConditional) {
-        if (!options) {
-          let {level} = rule.options
-          level = level === undefined ? 1 : level + 1
-          if (level > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
-          options = {...rule.options, named: false, level, index}
-        }
-        index = (index === undefined ? container.indexOf(rule) : index) + 1
-        options.index = index
+      if (!isNested && !isNestedConditional) continue
 
-        if (isNestedRule) {
-          // Lazily create the ref replacer function just once for all nested rules within
-          // the sheet.
-          if (!replaceRef) replaceRef = getReplaceRef(container)
-          addNestedRule(prop, rule, container, options, replaceRef)
-        }
-        else if (isNestedConditional) {
-          addNestedConditional(prop, rule, container)
-        }
-
-        delete rule.style[prop]
+      if (!options) {
+        let {level} = rule.options
+        level = level === undefined ? 1 : level + 1
+        if (level > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
+        options = {...rule.options, named: false, level}
       }
+      index = (index === undefined ? container.indexOf(rule) : index) + 1
+      options.index = index
+
+      if (isNested) {
+        // Lazily create the ref replacer function just once for all nested rules within
+        // the sheet.
+        if (!replaceRef) replaceRef = getReplaceRef(container)
+        const name = prop
+          // Replace all & by the parent selector.
+          .replace(parentRegExp, rule.selector)
+          // Replace all $ref.
+          .replace(refRegExp, replaceRef)
+        container.addRule(name, rule.style[prop], options)
+      }
+      else if (isNestedConditional) {
+        addConditional(prop, rule, container)
+      }
+
+      delete rule.style[prop]
     }
   }
 }
