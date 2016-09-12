@@ -19,54 +19,40 @@ export default function jssNested({warn = consoleWarn} = {}) {
     }
   }
 
-  function handeNestedRule(prop, rule, container, options, replaceRef) {
-    const name = prop
+  function addNestedRule(name, rule, container, options, replaceRef) {
+    const nameExtended = name
       // Replace all & by the parent selector.
       .replace(parentRegExp, rule.selector)
       // Replace all $ref.
       .replace(refRegExp, replaceRef)
 
-    container.addRule(name, rule.style[prop], options)
+    container.addRule(nameExtended, rule.style[name], options)
   }
 
-  function handleNestedConditional(prop, rule, container) {
-    const name = prop  // e.g. @media print
+  function addNestedConditional(name, rule, container) {
     const containerConditionalRule = container.getRule(name)
 
-    // check if conditional rule already exists in container
+    // Check if conditional rule already exists in container.
     if (containerConditionalRule) {
-      // exists, so now check if we have already defined styles
-      // e.g. @media print { .some-style { color: green; } }
-      const ruleToExtend = containerConditionalRule.rules.get(rule.name)
+      // It exists, so now check if we have already defined styles
+      // for example @media print { .some-style { display: none; } } .
+      const ruleToExtend = containerConditionalRule.getRule(rule.name)
 
       if (ruleToExtend) {
-        // yep found the style so we have to extend it
         ruleToExtend.style = {
           ...ruleToExtend.style,
-          ...rule.style[prop]
+          ...rule.style[name]
         }
       }
       else {
-        // found no style so create it
-        containerConditionalRule.addRule(rule.name, rule.style[prop])
+        // Conditional rule in container has no rule so create it.
+        containerConditionalRule.addRule(rule.name, rule.style[name])
       }
     }
     else {
-      // container do not have a registered conditional rule
-      container.addRule(name, {[rule.name]: rule.style[prop]})
+      // Add conditional to container because it does not exist yet.
+      container.addRule(name, {[rule.name]: rule.style[name]})
     }
-  }
-
-  function isNestedRule(prop) {
-    return prop[0] === '&'
-  }
-
-  function isNestedConditional(prop) {
-    return prop[0] === '@'
-  }
-
-  function isNested(prop) {
-    return isNestedRule(prop) || isNestedConditional(prop)
   }
 
   return rule => {
@@ -75,9 +61,15 @@ export default function jssNested({warn = consoleWarn} = {}) {
     let options
     let replaceRef
     let index
+    let isNestedRule
+    let isNestedConditional
+
 
     for (const prop in rule.style) {
-      if (isNested(prop)) {
+      isNestedRule = prop[0] === '&'
+      isNestedConditional = prop[0] === '@'
+
+      if (isNestedRule || isNestedConditional) {
         if (!options) {
           let {level} = rule.options
           level = level === undefined ? 1 : level + 1
@@ -87,14 +79,14 @@ export default function jssNested({warn = consoleWarn} = {}) {
         index = (index === undefined ? container.indexOf(rule) : index) + 1
         options.index = index
 
-        if (isNestedRule(prop)) {
+        if (isNestedRule) {
           // Lazily create the ref replacer function just once for all nested rules within
           // the sheet.
           if (!replaceRef) replaceRef = getReplaceRef(container)
-          handeNestedRule(prop, rule, container, options, replaceRef)
+          addNestedRule(prop, rule, container, options, replaceRef)
         }
-        else if (isNestedConditional(prop)) {
-          handleNestedConditional(prop, rule, container)
+        else if (isNestedConditional) {
+          addNestedConditional(prop, rule, container)
         }
 
         delete rule.style[prop]
