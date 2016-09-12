@@ -1,4 +1,4 @@
-## 2.3.0 / 2016-09-13
+## 2.4.0 / 2016-09-13
 
 - enable @media rules inside of regular rules
 
