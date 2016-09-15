@@ -421,6 +421,32 @@ describe('jss-nested', () => {
     })
   })
 
+  describe('local refs representing valid css class names', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          '& $b-attention': {float: 'left'}
+        },
+        'b-attention': {
+          color: 'red'
+        }
+      })
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.a-2802939882 .b-attention-3645560457 {\n' +
+        '  float: left;\n' +
+        '}\n' +
+        '.b-attention-3645560457 {\n' +
+        '  color: red;\n' +
+        '}'
+      )
+    })
+  })
+
   describe('nesting conditionals in combination with extend plugin', () => {
     let sheet
     let localJss

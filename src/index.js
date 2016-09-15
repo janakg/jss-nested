@@ -1,6 +1,6 @@
 const consoleWarn = console.warn.bind(console) // eslint-disable-line no-console
 const parentRegExp = /&/g
-const refRegExp = /\$(\w+)/g
+const refRegExp = /\$(-?[_a-zA-Z]+[_a-zA-Z0-9-]*)/g
 
 /**
  * Convert nested rules to separate, remove them from original styles.
