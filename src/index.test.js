@@ -398,24 +398,34 @@ describe('jss-nested', () => {
       sheet = jss.createStyleSheet({
         a: {
           float: 'left',
-          '& $b': {float: 'left'}
+          '& $b': {float: 'left'},
+          '& $b-warn': {float: 'right'}
         },
         b: {
           color: 'red'
+        },
+        'b-warn': {
+          color: 'orange'
         }
       })
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.a-2101561448 {\n' +
+        '.a-1261267506 {\n' +
         '  float: left;\n' +
         '}\n' +
-        '.a-2101561448 .b-3645560457 {\n' +
+        '.a-1261267506 .b-3645560457 {\n' +
         '  float: left;\n' +
+        '}\n' +
+        '.a-1261267506 .b-warn-1549041947 {\n' +
+        '  float: right;\n' +
         '}\n' +
         '.b-3645560457 {\n' +
         '  color: red;\n' +
+        '}\n' +
+        '.b-warn-1549041947 {\n' +
+        '  color: orange;\n' +
         '}'
       )
     })
