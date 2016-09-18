@@ -22,7 +22,6 @@ export default function jssNested({warn = consoleWarn} = {}) {
   function addConditional(name, rule, container) {
     const conditionalContainer = container.getRule(name)
 
-    // Check if conditional rule already exists in container.
     if (!conditionalContainer) {
       // Add conditional to container because it does not exist yet.
       container.addRule(name, {[rule.name]: rule.style[name]})
@@ -50,7 +49,6 @@ export default function jssNested({warn = consoleWarn} = {}) {
     const container = rule.options.parent
     let options
     let replaceRef
-    let index
 
     for (const prop in rule.style) {
       const isNested = prop[0] === '&'
@@ -58,14 +56,18 @@ export default function jssNested({warn = consoleWarn} = {}) {
 
       if (!isNested && !isNestedConditional) continue
 
-      if (!options) {
-        let {level} = rule.options
-        level = level === undefined ? 1 : level + 1
-        if (level > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
-        options = {...rule.options, named: false, level}
+      if (options) options = {...options, index: options.index + 1}
+      else {
+        let {nestingLevel} = rule.options
+        nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
+        if (nestingLevel > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
+        options = {
+          ...rule.options,
+          named: false,
+          nestingLevel,
+          index: container.indexOf(rule) + 1
+        }
       }
-      index = (index === undefined ? container.indexOf(rule) : index) + 1
-      options.index = index
 
       if (isNested) {
         // Lazily create the ref replacer function just once for all nested rules within
@@ -76,6 +78,7 @@ export default function jssNested({warn = consoleWarn} = {}) {
           .replace(parentRegExp, rule.selector)
           // Replace all $ref.
           .replace(refRegExp, replaceRef)
+
         container.addRule(name, rule.style[prop], options)
       }
       else if (isNestedConditional) {

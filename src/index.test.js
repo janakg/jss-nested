@@ -249,6 +249,9 @@ describe('jss-nested', () => {
           '@media': {
             width: '200px'
           }
+        },
+        b: {
+          color: 'red'
         }
       })
     })
@@ -256,12 +259,16 @@ describe('jss-nested', () => {
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
       expect(sheet.getRule('@media')).to.not.be(undefined)
+      expect(sheet.getRule('b')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
         '.a-3036715211 {\n' +
         '  color: green;\n' +
+        '}\n' +
+        '.b-3645560457 {\n' +
+        '  color: red;\n' +
         '}\n' +
         '@media {\n' +
         '  .a-3036715211 {\n' +
@@ -272,21 +279,15 @@ describe('jss-nested', () => {
     })
   })
 
-  describe('merge nested conditional to container conditional', () => {
+  describe('adding a rule with a conditional rule', () => {
     let sheet
 
     beforeEach(() => {
-      sheet = jss.createStyleSheet({
-        a: {
-          color: 'green',
-          '@media': {
-            width: '200px'
-          }
-        },
+      sheet = jss.createStyleSheet()
+      sheet.addRule('a', {
+        color: 'green',
         '@media': {
-          a: {
-            color: 'blue'
-          }
+          width: '200px'
         }
       })
     })
@@ -303,7 +304,6 @@ describe('jss-nested', () => {
         '}\n' +
         '@media {\n' +
         '  .a-3036715211 {\n' +
-        '    color: blue;\n' +
         '    width: 200px;\n' +
         '  }\n' +
         '}'
@@ -326,6 +326,9 @@ describe('jss-nested', () => {
           b: {
             color: 'blue'
           }
+        },
+        c: {
+          color: 'red'
         }
       })
     })
@@ -333,6 +336,7 @@ describe('jss-nested', () => {
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
       expect(sheet.getRule('@media')).to.not.be(undefined)
+      expect(sheet.getRule('c')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
@@ -347,6 +351,9 @@ describe('jss-nested', () => {
         '  .a-3036715211 {\n' +
         '    width: 200px;\n' +
         '  }\n' +
+        '}\n' +
+        '.c-3645560457 {\n' +
+        '  color: red;\n' +
         '}'
       )
     })
@@ -433,10 +440,9 @@ describe('jss-nested', () => {
 
   describe('nesting conditionals in combination with extend plugin', () => {
     let sheet
-    let localJss
 
     beforeEach(() => {
-      localJss = create().use(jssExtend()).use(nested())
+      const localJss = create().use(jssExtend(), nested())
       sheet = localJss.createStyleSheet({
         button: {
           color: 'green',
@@ -445,7 +451,7 @@ describe('jss-nested', () => {
             width: '200px'
           }
         },
-        'red-button': {
+        redButton: {
           extend: 'button',
           color: 'red'
         }
@@ -455,6 +461,7 @@ describe('jss-nested', () => {
     it('should add rules', () => {
       expect(sheet.getRule('button')).to.not.be(undefined)
       expect(sheet.getRule('@media')).to.not.be(undefined)
+      expect(sheet.getRule('redButton')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
@@ -463,7 +470,7 @@ describe('jss-nested', () => {
         '  color: green;\n' +
         '  background-color: aqua;\n' +
         '}\n' +
-        '.red-button-4175883671 {\n' +
+        '.redButton-4175883671 {\n' +
         '  color: red;\n' +
         '  background-color: aqua;\n' +
         '}\n' +
@@ -471,7 +478,7 @@ describe('jss-nested', () => {
         '  .button-148595348 {\n' +
         '    width: 200px;\n' +
         '  }\n' +
-        '  .red-button-4175883671 {\n' +
+        '  .redButton-4175883671 {\n' +
         '    width: 200px;\n' +
         '  }\n' +
         '}'
