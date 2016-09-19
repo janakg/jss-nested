@@ -1,3 +1,9 @@
+## 2.4.1 / 2016-09-19
+
+- allow "-" in refs
+- better tests
+- on index mutation
+
 ## 2.4.0 / 2016-09-13
 
 - enable @media rules inside of regular rules
