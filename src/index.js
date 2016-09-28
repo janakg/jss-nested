@@ -1,6 +1,8 @@
-const consoleWarn = console.warn.bind(console) // eslint-disable-line no-console
+import warning from 'warning'
+
 const parentRegExp = /&/g
 const refRegExp = /\$([\w-]+)/g
+
 
 /**
  * Convert nested rules to separate, remove them from original styles.
@@ -8,13 +10,13 @@ const refRegExp = /\$([\w-]+)/g
  * @param {Rule} rule
  * @api public
  */
-export default function jssNested({warn = consoleWarn} = {}) {
+export default function jssNested() {
   // Get a function to be used for $ref replacement.
   function getReplaceRef(container) {
     return (match, name) => {
       const rule = container.getRule(name)
       if (rule) return rule.selector
-      warn(`[JSS] Could not find the referenced rule "${name}".`)
+      warning(false, '[JSS] Could not find the referenced rule %s. \r\n%s', name, rule)
       return name
     }
   }
@@ -60,7 +62,7 @@ export default function jssNested({warn = consoleWarn} = {}) {
       else {
         let {nestingLevel} = rule.options
         nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
-        if (nestingLevel > 1) warn(`[JSS] Nesting is too deep "${prop}".`)
+        warning(nestingLevel < 2, '[JSS] Nesting is too deep. \r\n%s', rule)
         options = {
           ...rule.options,
           named: false,

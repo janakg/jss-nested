@@ -1,15 +1,24 @@
+/* eslint-disable no-underscore-dangle */
+
 import expect from 'expect.js'
-import nested from './index'
+import nested from './'
 import jssExtend from 'jss-extend'
 import {create} from 'jss'
 
-const noWarn = message => expect(message).to.be(undefined)
-
 describe('jss-nested', () => {
   let jss
+  let warning
 
   beforeEach(() => {
-    jss = create().use(nested({warn: noWarn}))
+    nested.__Rewire__('warning', (condition, message) => {
+      warning = message
+    })
+    jss = create().use(nested())
+  })
+
+  afterEach(() => {
+    nested.__ResetDependency__('warning')
+    warning = undefined
   })
 
   describe('nesting with space', () => {
@@ -360,32 +369,18 @@ describe('jss-nested', () => {
   })
 
   describe('warnings', () => {
-    let localJss
-    let warning
-
-    beforeEach(() => {
-      const warn = message => {
-        warning = message
-      }
-      localJss = create().use(nested({warn}))
-    })
-
-    afterEach(() => {
-      warning = null
-    })
-
     it('should warn when referenced rule is not found', () => {
-      localJss.createStyleSheet({
+      jss.createStyleSheet({
         a: {
           '& $b': {float: 'left'}
         }
       })
 
-      expect(warning).to.be('[JSS] Could not find the referenced rule "b".')
+      expect(warning).to.be('[JSS] Could not find the referenced rule %s. \r\n%s')
     })
 
     it('should warn when nesting is too deep', () => {
-      localJss.createStyleSheet({
+      jss.createStyleSheet({
         a: {
           '& .a': {
             float: 'left',
@@ -394,7 +389,7 @@ describe('jss-nested', () => {
         }
       })
 
-      expect(warning).to.be('[JSS] Nesting is too deep "& .b".')
+      expect(warning).to.be('[JSS] Nesting is too deep. \r\n%s')
     })
   })
 
