@@ -1,6 +1,8 @@
 const assign = require('lodash.assign')
 const webpackConfig = require('./webpack.config')
 
+const isBench = process.env.BENCHMARK === 'true'
+
 module.exports = (config) => {
   config.set({
     browsers: ['Chrome', 'Firefox', 'Safari'],
@@ -22,4 +24,15 @@ module.exports = (config) => {
       type: 'json'
     }
   })
+  if (isBench) {
+    assign(config, {
+      browsers: ['Chrome'],
+      frameworks: ['benchmark'],
+      files: ['benchmark/**/*.js'],
+      preprocessors: {'benchmark/**/*.js': ['webpack']},
+      reporters: ['benchmark'],
+      // Some tests are slow.
+      browserNoActivityTimeout: 20000
+    })
+  }
 }

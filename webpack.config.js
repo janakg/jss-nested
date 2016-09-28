@@ -1,8 +1,6 @@
-'use strict'
+const webpack = require('webpack')
 
-var webpack = require('webpack')
-
-var plugins = [
+const plugins = [
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     __DEV__: process.env.NODE_ENV === 'development',
@@ -19,13 +17,17 @@ module.exports = {
     library: 'jssNested',
     libraryTarget: 'umd'
   },
-  plugins: plugins,
+  plugins,
   module: {
     loaders: [
       {
         loader: 'babel-loader',
         test: /\.js$/,
         exclude: /node_modules/
+      },
+      {
+        loader: 'json-loader',
+        test: /\.json$/
       }
     ]
   }
