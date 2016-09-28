@@ -30,7 +30,8 @@
     "lint:staged": "lint-staged",
     "test": "karma start --single-run ",
     "test:watch": "karma start",
-    "prepublish": "npm run all"
+    "prepublish": "npm run all",
+    "bench": "BENCHMARK=true npm run test"
   },
   "license": "MIT",
   "main": "./lib/index.js",
@@ -48,6 +49,7 @@
     "eslint-plugin-jsx-a11y": "^1.5.5",
     "eslint-plugin-react": "^5.0.1",
     "expect.js": "^0.3.1",
+    "json-loader": "^0.5.4",
     "jss": "^5.5.0",
     "jss-extend": "^2.0.0",
     "karma": "^1.1.1",
