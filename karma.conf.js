@@ -24,6 +24,7 @@ module.exports = (config) => {
       type: 'json'
     }
   })
+
   if (isBench) {
     assign(config, {
       browsers: ['Chrome'],
