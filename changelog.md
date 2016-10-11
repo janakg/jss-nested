@@ -1,3 +1,7 @@
+## 2.4.3 / 2016-10-11
+
+- fix the build name
+
 ## 2.4.2 / 2016-09-30
 
 - tests integration into jss repo
