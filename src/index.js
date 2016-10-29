@@ -84,19 +84,18 @@ export default function jssNested() {
 
       if (!isNested && !isNestedConditional) continue
 
-      if (options) options = {...options, index: options.index + 1}
-      else {
-        let {nestingLevel} = rule.options
-        nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
-        options = {
-          ...rule.options,
-          named: false,
-          nestingLevel,
-          index: container.indexOf(rule) + 1
-        }
-      }
-
       if (isNested) {
+        if (options) options = {...options, index: options.index + 1}
+        else {
+          let {nestingLevel} = rule.options
+          nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
+          options = {
+            ...rule.options,
+            named: false,
+            nestingLevel,
+            index: container.indexOf(rule) + 1
+          }
+        }
         // Lazily create the ref replacer function just once for all nested rules within
         // the sheet.
         if (!replaceRef) replaceRef = getReplaceRef(container)
