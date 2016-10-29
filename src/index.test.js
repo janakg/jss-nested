@@ -378,19 +378,6 @@ describe('jss-nested', () => {
 
       expect(warning).to.be('[JSS] Could not find the referenced rule %s. \r\n%s')
     })
-
-    it('should warn when nesting is too deep', () => {
-      jss.createStyleSheet({
-        a: {
-          '& .a': {
-            float: 'left',
-            '& .b': {float: 'left'}
-          }
-        }
-      })
-
-      expect(warning).to.be('[JSS] Nesting is too deep. \r\n%s')
-    })
   })
 
   describe('local refs', () => {
@@ -476,6 +463,88 @@ describe('jss-nested', () => {
         '  .redButton-4175883671 {\n' +
         '    width: 200px;\n' +
         '  }\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('deep nesting', () => {
+    let sheet
+
+    beforeEach(() => {
+      const localJss = create().use(jssExtend(), nested())
+      sheet = localJss.createStyleSheet({
+        button: {
+          color: 'black',
+          '& .a': {
+            color: 'red',
+            '& .c': {
+              color: 'gold'
+            }
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('button')).to.not.be(undefined)
+      expect(sheet.getRule('.button-3439974623 .a')).to.not.be(undefined)
+      expect(sheet.getRule('.button-3439974623 .a .c')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.button-3439974623 {\n' +
+        '  color: black;\n' +
+        '}\n' +
+        '.button-3439974623 .a {\n' +
+        '  color: red;\n' +
+        '}\n' +
+        '.button-3439974623 .a .c {\n' +
+        '  color: gold;\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('deep nesting with multiple nestings in one selector', () => {
+    let sheet
+
+    beforeEach(() => {
+      const localJss = create().use(jssExtend(), nested())
+      sheet = localJss.createStyleSheet({
+        button: {
+          color: 'black',
+          '& .a, .b': {
+            color: 'red',
+            '& .c, &:hover': {
+              color: 'gold'
+            }
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('button')).to.not.be(undefined)
+      expect(sheet.getRule('.button-1766210468 .a, .button-1766210468 .b')).to.not.be(undefined)
+      expect(sheet.getRule(
+        '.button-1766210468 .a .c, .button-1766210468 .a:hover, ' +
+        '.button-1766210468 .b .c, .button-1766210468 .b:hover'))
+        .to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.button-1766210468 {\n' +
+        '  color: black;\n' +
+        '}\n' +
+        '.button-1766210468 .a, .button-1766210468 .b {\n' +
+        '  color: red;\n' +
+        '}\n' +
+        '.button-1766210468 .a .c, .button-1766210468 .a:hover, ' +
+        '.button-1766210468 .b .c, .button-1766210468 .b:hover {\n' +
+        '  color: gold;\n' +
         '}'
       )
     })

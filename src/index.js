@@ -1,5 +1,6 @@
 import warning from 'warning'
 
+const separatorRegExp = /\s*,\s*/g
 const parentRegExp = /&/g
 const refRegExp = /\$([\w-]+)/g
 
@@ -46,6 +47,31 @@ export default function jssNested() {
     conditionalContainer.addRule(rule.name, rule.style[name])
   }
 
+  function resolveSelector(parentSelector, nestedSelector, ref) {
+    let result = ''
+    const parentSelectorList = parentSelector.split(separatorRegExp)
+    const nestedSelectorList = nestedSelector.split(separatorRegExp)
+
+    for (let i = 0; i < parentSelectorList.length; i++) {
+      const parentSel = parentSelectorList[i]
+
+      for (let j = 0; j < nestedSelectorList.length; j++) {
+        const nestedSel = nestedSelectorList[j]
+        const isDescendant = nestedSel[0] !== '&'
+        const selector = nestedSel
+          // Replace all & by the parent selector.
+          .replace(parentRegExp, parentSel)
+          // Replace all $ref.
+          .replace(refRegExp, ref)
+
+        if (result !== '') result += ', '
+        result += isDescendant ? `${parentSel} ${selector}` : selector
+      }
+    }
+
+    return result
+  }
+
   return rule => {
     if (rule.type !== 'regular') return
     const container = rule.options.parent
@@ -62,7 +88,6 @@ export default function jssNested() {
       else {
         let {nestingLevel} = rule.options
         nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
-        warning(nestingLevel < 2, '[JSS] Nesting is too deep. \r\n%s', rule)
         options = {
           ...rule.options,
           named: false,
@@ -75,12 +100,7 @@ export default function jssNested() {
         // Lazily create the ref replacer function just once for all nested rules within
         // the sheet.
         if (!replaceRef) replaceRef = getReplaceRef(container)
-        const name = prop
-          // Replace all & by the parent selector.
-          .replace(parentRegExp, rule.selector)
-          // Replace all $ref.
-          .replace(refRegExp, replaceRef)
-
+        const name = resolveSelector(rule.selector, prop, replaceRef)
         container.addRule(name, rule.style[prop], options)
       }
       else if (isNestedConditional) {
