@@ -117,13 +117,30 @@ const sheet = jss.createStyleSheet({
 
 ### Deep nesting
 
-Deep nesting is not supported for multiple reasons:
+```javascript
+const sheet = jss.createStyleSheet({
+  button: {
+    '&$warn': {
+      color: 'red',
+      '&:hover, &:focus': {
+        color: 'white',
+        background: 'red'
+      }
+    }
+  },
+  warn: {}
+})
+```
 
-1. More than 2 levels of indentation lead to less readability from our experience.
-1. Components should never be big and so there should be no need for deep nesting.
-1. Even if they are big, deep nesting shouldn't be needed. Class names can be switched on nodes for different states.
-
-If you can provide a real life example where you __really need__ deep nesting - we would love to know it.
+```css
+.button-274964227.warn-2315792072 {
+  color: red;
+}
+.button-274964227.warn-2315792072:hover, .button-274964227.warn-2315792072:focus {
+  color: white;
+  background: red;
+}
+```
 
 ## Issues
 
