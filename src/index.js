@@ -47,29 +47,28 @@ export default function jssNested() {
     conditionalContainer.addRule(rule.name, rule.style[name])
   }
 
-  function resolveSelector(parentSelector, nestedSelector, ref) {
+  function resolveSelectors(parentProp, nestedProp, ref) {
+    const parentSelectors = parentProp.split(separatorRegExp)
+    const nestedSelectors = nestedProp.split(separatorRegExp)
+
     let result = ''
-    const parentSelectorList = parentSelector.split(separatorRegExp)
-    const nestedSelectorList = nestedSelector.split(separatorRegExp)
 
-    for (let i = 0; i < parentSelectorList.length; i++) {
-      const parentSel = parentSelectorList[i]
+    for (let i = 0; i < parentSelectors.length; i++) {
+      const parent = parentSelectors[i]
 
-      for (let j = 0; j < nestedSelectorList.length; j++) {
-        const nestedSel = nestedSelectorList[j]
-        const isDescendant = nestedSel[0] !== '&'
-        const selector = nestedSel
-          // Replace all & by the parent selector.
-          .replace(parentRegExp, parentSel)
-          // Replace all $ref.
-          .replace(refRegExp, ref)
+      for (let j = 0; j < nestedSelectors.length; j++) {
+        const nested = nestedSelectors[j]
+        const hasAnd = nested[0] === '&'
 
-        if (result !== '') result += ', '
-        result += isDescendant ? `${parentSel} ${selector}` : selector
+        if (result) result += ', '
+
+        // Replace all & by the parent or prefix & with the parent.
+        result += hasAnd ? nested.replace(parentRegExp, parent) : `${parent} ${nested}`
       }
     }
 
-    return result
+    // Replace all $refs.
+    return result.replace(refRegExp, ref)
   }
 
   return rule => {
@@ -99,8 +98,8 @@ export default function jssNested() {
         // Lazily create the ref replacer function just once for all nested rules within
         // the sheet.
         if (!replaceRef) replaceRef = getReplaceRef(container)
-        const name = resolveSelector(rule.selector, prop, replaceRef)
-        container.addRule(name, rule.style[prop], options)
+        const selector = resolveSelectors(rule.selector, prop, replaceRef)
+        container.addRule(selector, rule.style[prop], options)
       }
       else if (isNestedConditional) {
         addConditional(prop, rule, container)

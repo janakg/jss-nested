@@ -511,8 +511,7 @@ describe('jss-nested', () => {
     let sheet
 
     beforeEach(() => {
-      const localJss = create().use(jssExtend(), nested())
-      sheet = localJss.createStyleSheet({
+      sheet = jss.createStyleSheet({
         button: {
           color: 'black',
           '& .a, .b': {
