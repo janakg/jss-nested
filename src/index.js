@@ -46,7 +46,9 @@ export default function jssNested() {
     conditionalContainer.addRule(rule.name, rule.style[name])
   }
 
-  function resolveSelectors(nestedProp, parentProp, replaceRef) {
+  const hasAnd = str => str.indexOf('&') !== -1
+
+  function replaceParentRefs(nestedProp, parentProp) {
     const parentSelectors = parentProp.split(separatorRegExp)
     const nestedSelectors = nestedProp.split(separatorRegExp)
 
@@ -57,17 +59,13 @@ export default function jssNested() {
 
       for (let j = 0; j < nestedSelectors.length; j++) {
         const nested = nestedSelectors[j]
-        const hasAnd = nested[0] === '&'
-
         if (result) result += ', '
-
         // Replace all & by the parent or prefix & with the parent.
-        result += hasAnd ? nested.replace(parentRegExp, parent) : `${parent} ${nested}`
+        result += hasAnd(nested) ? nested.replace(parentRegExp, parent) : `${parent} ${nested}`
       }
     }
 
-    // Replace all $refs.
-    return result.replace(refRegExp, replaceRef)
+    return result
   }
 
   function getOptions(rule, container, options) {
@@ -92,7 +90,7 @@ export default function jssNested() {
     let replaceRef
 
     for (const prop in rule.style) {
-      const isNested = prop[0] === '&'
+      const isNested = hasAnd(prop)
       const isNestedConditional = prop[0] === '@'
 
       if (!isNested && !isNestedConditional) continue
@@ -100,10 +98,13 @@ export default function jssNested() {
       if (isNested) {
         options = getOptions(rule, container, options)
 
+        let selector = replaceParentRefs(prop, rule.selector)
         // Lazily create the ref replacer function just once for
         // all nested rules within the sheet.
         if (!replaceRef) replaceRef = getReplaceRef(container)
-        const selector = resolveSelectors(prop, rule.selector, replaceRef)
+        // Replace all $refs.
+        selector = selector.replace(refRegExp, replaceRef)
+
         container.addRule(selector, rule.style[prop], options)
       }
       else if (isNestedConditional) {

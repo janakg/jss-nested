@@ -548,4 +548,26 @@ describe('jss-nested', () => {
       )
     })
   })
+
+  describe('support & at any position', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          'input:focus + &': {
+            color: 'red'
+          }
+        }
+      })
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        'input:focus + .a-1380569186 {\n' +
+        '  color: red;\n' +
+        '}'
+      )
+    })
+  })
 })
