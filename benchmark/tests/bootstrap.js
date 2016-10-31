@@ -1,16 +1,14 @@
 import {create} from 'jss'
-import nestedBootstrap from '../fixtures/modify_bootstrap.json'
 
+import bootstrap from '../fixtures/modified-bootstrap.json'
 import nested from '../../src/index'
 
-const jss = create()
+suite('Nested bootstrap JSS to CSS', () => {
+  benchmark('.toString()', () => {
+    const jss = create().use(nested())
 
-jss.use(nested())
-
-suite('Bootstrap JSS to CSS', () => {
-  benchmark('named with nested .toString()', () => {
     jss
-      .createStyleSheet(nestedBootstrap)
+      .createStyleSheet(bootstrap)
       .toString()
   })
 })
