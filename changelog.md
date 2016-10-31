@@ -1,3 +1,11 @@
+## 2.5.0 / 2016-10-31
+
+- fix bench
+- add cross-env
+- implement deep nesting cssinjs/jss#312
+- support & at any position cssinjs/jss#297
+
+
 ## 2.4.3 / 2016-10-11
 
 - fix the build name
