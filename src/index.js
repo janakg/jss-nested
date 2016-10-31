@@ -4,7 +4,6 @@ const separatorRegExp = /\s*,\s*/g
 const parentRegExp = /&/g
 const refRegExp = /\$([\w-]+)/g
 
-
 /**
  * Convert nested rules to separate, remove them from original styles.
  *
@@ -47,7 +46,7 @@ export default function jssNested() {
     conditionalContainer.addRule(rule.name, rule.style[name])
   }
 
-  function resolveSelectors(parentProp, nestedProp, ref) {
+  function resolveSelectors(nestedProp, parentProp, replaceRef) {
     const parentSelectors = parentProp.split(separatorRegExp)
     const nestedSelectors = nestedProp.split(separatorRegExp)
 
@@ -68,7 +67,22 @@ export default function jssNested() {
     }
 
     // Replace all $refs.
-    return result.replace(refRegExp, ref)
+    return result.replace(refRegExp, replaceRef)
+  }
+
+  function getOptions(rule, container, options) {
+    // Options has been already created, now we only increase index.
+    if (options) return {...options, index: options.index + 1}
+
+    let {nestingLevel} = rule.options
+    nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
+
+    return {
+      ...rule.options,
+      named: false,
+      nestingLevel,
+      index: container.indexOf(rule) + 1
+    }
   }
 
   return rule => {
@@ -84,21 +98,12 @@ export default function jssNested() {
       if (!isNested && !isNestedConditional) continue
 
       if (isNested) {
-        if (options) options = {...options, index: options.index + 1}
-        else {
-          let {nestingLevel} = rule.options
-          nestingLevel = nestingLevel === undefined ? 1 : nestingLevel + 1
-          options = {
-            ...rule.options,
-            named: false,
-            nestingLevel,
-            index: container.indexOf(rule) + 1
-          }
-        }
-        // Lazily create the ref replacer function just once for all nested rules within
-        // the sheet.
+        options = getOptions(rule, container, options)
+
+        // Lazily create the ref replacer function just once for
+        // all nested rules within the sheet.
         if (!replaceRef) replaceRef = getReplaceRef(container)
-        const selector = resolveSelectors(rule.selector, prop, replaceRef)
+        const selector = resolveSelectors(prop, rule.selector, replaceRef)
         container.addRule(selector, rule.style[prop], options)
       }
       else if (isNestedConditional) {
