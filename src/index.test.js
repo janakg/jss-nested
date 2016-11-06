@@ -5,6 +5,10 @@ import nested from './'
 import jssExtend from 'jss-extend'
 import {create} from 'jss'
 
+const settings = {
+  generateClassName: (str, rule) => `${rule.name}-id`
+}
+
 describe('jss-nested', () => {
   let jss
   let warning
@@ -13,7 +17,8 @@ describe('jss-nested', () => {
     nested.__Rewire__('warning', (condition, message) => {
       warning = message
     })
-    jss = create().use(nested())
+
+    jss = create(settings).use(nested())
   })
 
   afterEach(() => {
@@ -30,20 +35,20 @@ describe('jss-nested', () => {
           float: 'left',
           '& b': {float: 'left'}
         }
-      }, {named: false})
+      })
     })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('a b')).to.not.be(undefined)
+      expect(sheet.getRule('.a-id b')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        'a {\n' +
+        '.a-id {\n' +
         '  float: left;\n' +
         '}\n' +
-        'a b {\n' +
+        '.a-id b {\n' +
         '  float: left;\n' +
         '}'
       )
@@ -59,20 +64,20 @@ describe('jss-nested', () => {
           float: 'left',
           '&b': {float: 'left'}
         }
-      }, {named: false})
+      })
     })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('ab')).to.not.be(undefined)
+      expect(sheet.getRule('.a-idb')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        'a {\n' +
+        '.a-id {\n' +
         '  float: left;\n' +
         '}\n' +
-        'ab {\n' +
+        '.a-idb {\n' +
         '  float: left;\n' +
         '}'
       )
@@ -89,24 +94,24 @@ describe('jss-nested', () => {
           '&b': {float: 'left'},
           '& c': {float: 'left'}
         }
-      }, {named: false})
+      })
     })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('ab')).to.not.be(undefined)
-      expect(sheet.getRule('a c')).to.not.be(undefined)
+      expect(sheet.getRule('.a-idb')).to.not.be(undefined)
+      expect(sheet.getRule('.a-id c')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        'a {\n' +
+        '.a-id {\n' +
         '  float: left;\n' +
         '}\n' +
-        'ab {\n' +
+        '.a-idb {\n' +
         '  float: left;\n' +
         '}\n' +
-        'a c {\n' +
+        '.a-id c {\n' +
         '  float: left;\n' +
         '}'
       )
@@ -122,20 +127,20 @@ describe('jss-nested', () => {
           float: 'left',
           '&b, &c': {float: 'left'}
         }
-      }, {named: false})
+      })
     })
 
     it('should add rules', () => {
       expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('ab, ac')).to.not.be(undefined)
+      expect(sheet.getRule('.a-idb, .a-idc')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        'a {\n' +
+        '.a-id {\n' +
         '  float: left;\n' +
         '}\n' +
-        'ab, ac {\n' +
+        '.a-idb, .a-idc {\n' +
         '  float: left;\n' +
         '}'
       )
@@ -150,7 +155,7 @@ describe('jss-nested', () => {
         a: {
           height: '1px'
         }
-      }, {named: false})
+      })
 
       sheet.addRules({
         b: {
@@ -164,56 +169,20 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        'a {\n' +
+        '.a-id {\n' +
         '  height: 1px;\n' +
         '}\n' +
-        'b {\n' +
+        '.b-id {\n' +
         '  height: 2px;\n' +
         '}\n' +
-        'b c {\n' +
+        '.b-id c {\n' +
         '  height: 3px;\n' +
         '}'
       )
     })
   })
 
-  describe('nesting in a namespaced rule', () => {
-    let sheet
-
-    beforeEach(() => {
-      sheet = jss.createStyleSheet({
-        a: {
-          float: 'left',
-          '& b': {float: 'left'}
-        },
-        c: {
-          float: 'left'
-        }
-      })
-    })
-
-    it('should add rules', () => {
-      expect(sheet.getRule('a')).to.not.be(undefined)
-      expect(sheet.getRule('.a-3182562902 b')).to.not.be(undefined)
-      expect(sheet.getRule('c')).to.not.be(undefined)
-    })
-
-    it('should generate correct CSS', () => {
-      expect(sheet.toString()).to.be(
-        '.a-3182562902 {\n' +
-        '  float: left;\n' +
-        '}\n' +
-        '.a-3182562902 b {\n' +
-        '  float: left;\n' +
-        '}\n' +
-        '.c-3787690649 {\n' +
-        '  float: left;\n' +
-        '}'
-      )
-    })
-  })
-
-  describe('nesting in a conditional namespaced rule', () => {
+  describe('nesting in a conditional', () => {
     let sheet
 
     beforeEach(() => {
@@ -236,11 +205,11 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.a-460900105 {\n' +
+        '.a-id {\n' +
         '  color: green;\n' +
         '}\n' +
         '@media {\n' +
-        '  .a-460900105:hover {\n' +
+        '  .a-id:hover {\n' +
         '    color: red;\n' +
         '  }\n' +
         '}'
@@ -273,14 +242,14 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.a-3036715211 {\n' +
+        '.a-id {\n' +
         '  color: green;\n' +
         '}\n' +
-        '.b-3645560457 {\n' +
+        '.b-id {\n' +
         '  color: red;\n' +
         '}\n' +
         '@media {\n' +
-        '  .a-3036715211 {\n' +
+        '  .a-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +
         '}'
@@ -308,11 +277,11 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.a-3036715211 {\n' +
+        '.a-id {\n' +
         '  color: green;\n' +
         '}\n' +
         '@media {\n' +
-        '  .a-3036715211 {\n' +
+        '  .a-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +
         '}'
@@ -350,18 +319,18 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.a-3036715211 {\n' +
+        '.a-id {\n' +
         '  color: green;\n' +
         '}\n' +
         '@media {\n' +
-        '  .b-1243194637 {\n' +
+        '  .b-id {\n' +
         '    color: blue;\n' +
         '  }\n' +
-        '  .a-3036715211 {\n' +
+        '  .a-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +
         '}\n' +
-        '.c-3645560457 {\n' +
+        '.c-id {\n' +
         '  color: red;\n' +
         '}'
       )
@@ -401,19 +370,19 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.a-1261267506 {\n' +
+        '.a-id {\n' +
         '  float: left;\n' +
         '}\n' +
-        '.a-1261267506 .b-3645560457 {\n' +
+        '.a-id .b-id {\n' +
         '  float: left;\n' +
         '}\n' +
-        '.a-1261267506 .b-warn-1549041947 {\n' +
+        '.a-id .b-warn-id {\n' +
         '  float: right;\n' +
         '}\n' +
-        '.b-3645560457 {\n' +
+        '.b-id {\n' +
         '  color: red;\n' +
         '}\n' +
-        '.b-warn-1549041947 {\n' +
+        '.b-warn-id {\n' +
         '  color: orange;\n' +
         '}'
       )
@@ -424,7 +393,7 @@ describe('jss-nested', () => {
     let sheet
 
     beforeEach(() => {
-      const localJss = create().use(jssExtend(), nested())
+      const localJss = create(settings).use(jssExtend(), nested())
       sheet = localJss.createStyleSheet({
         button: {
           color: 'green',
@@ -448,19 +417,19 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.button-148595348 {\n' +
+        '.button-id {\n' +
         '  color: green;\n' +
         '  background-color: aqua;\n' +
         '}\n' +
-        '.redButton-4175883671 {\n' +
+        '.redButton-id {\n' +
         '  color: red;\n' +
         '  background-color: aqua;\n' +
         '}\n' +
         '@media {\n' +
-        '  .button-148595348 {\n' +
+        '  .button-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +
-        '  .redButton-4175883671 {\n' +
+        '  .redButton-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +
         '}'
@@ -472,7 +441,7 @@ describe('jss-nested', () => {
     let sheet
 
     beforeEach(() => {
-      const localJss = create().use(jssExtend(), nested())
+      const localJss = create(settings).use(jssExtend(), nested())
       sheet = localJss.createStyleSheet({
         button: {
           color: 'black',
@@ -488,19 +457,19 @@ describe('jss-nested', () => {
 
     it('should add rules', () => {
       expect(sheet.getRule('button')).to.not.be(undefined)
-      expect(sheet.getRule('.button-3439974623 .a')).to.not.be(undefined)
-      expect(sheet.getRule('.button-3439974623 .a .c')).to.not.be(undefined)
+      expect(sheet.getRule('.button-id .a')).to.not.be(undefined)
+      expect(sheet.getRule('.button-id .a .c')).to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.button-3439974623 {\n' +
+        '.button-id {\n' +
         '  color: black;\n' +
         '}\n' +
-        '.button-3439974623 .a {\n' +
+        '.button-id .a {\n' +
         '  color: red;\n' +
         '}\n' +
-        '.button-3439974623 .a .c {\n' +
+        '.button-id .a .c {\n' +
         '  color: gold;\n' +
         '}'
       )
@@ -526,23 +495,23 @@ describe('jss-nested', () => {
 
     it('should add rules', () => {
       expect(sheet.getRule('button')).to.not.be(undefined)
-      expect(sheet.getRule('.button-1766210468 .a, .button-1766210468 .b')).to.not.be(undefined)
+      expect(sheet.getRule('.button-id .a, .button-id .b')).to.not.be(undefined)
       expect(sheet.getRule(
-        '.button-1766210468 .a .c, .button-1766210468 .a:hover, ' +
-        '.button-1766210468 .b .c, .button-1766210468 .b:hover'))
+        '.button-id .a .c, .button-id .a:hover, ' +
+        '.button-id .b .c, .button-id .b:hover'))
         .to.not.be(undefined)
     })
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        '.button-1766210468 {\n' +
+        '.button-id {\n' +
         '  color: black;\n' +
         '}\n' +
-        '.button-1766210468 .a, .button-1766210468 .b {\n' +
+        '.button-id .a, .button-id .b {\n' +
         '  color: red;\n' +
         '}\n' +
-        '.button-1766210468 .a .c, .button-1766210468 .a:hover, ' +
-        '.button-1766210468 .b .c, .button-1766210468 .b:hover {\n' +
+        '.button-id .a .c, .button-id .a:hover, ' +
+        '.button-id .b .c, .button-id .b:hover {\n' +
         '  color: gold;\n' +
         '}'
       )
@@ -564,7 +533,7 @@ describe('jss-nested', () => {
 
     it('should generate correct CSS', () => {
       expect(sheet.toString()).to.be(
-        'input:focus + .a-1380569186 {\n' +
+        'input:focus + .a-id {\n' +
         '  color: red;\n' +
         '}'
       )

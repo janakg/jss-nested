@@ -77,13 +77,12 @@ export default function jssNested() {
 
     return {
       ...rule.options,
-      named: false,
       nestingLevel,
       index: container.indexOf(rule) + 1
     }
   }
 
-  return rule => {
+  return (rule) => {
     if (rule.type !== 'regular') return
     const container = rule.options.parent
     let options
@@ -105,7 +104,7 @@ export default function jssNested() {
         // Replace all $refs.
         selector = selector.replace(refRegExp, replaceRef)
 
-        container.addRule(selector, rule.style[prop], options)
+        container.addRule(selector, rule.style[prop], {...options, selector})
       }
       else if (isNestedConditional) {
         addConditional(prop, rule, container)
