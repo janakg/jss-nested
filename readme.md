@@ -6,6 +6,7 @@ in general.
 
 [Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
 [JSS](https://github.com/cssinjs/jss)
+
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
 
 ### Use `&` to reference selector of the parent rule.
