@@ -1,3 +1,8 @@
+## 3.0.0 / 2016-12-09
+
+- remove dep to named option
+- update to jss 6.0
+
 ## 2.5.0 / 2016-10-31
 
 - fix bench
