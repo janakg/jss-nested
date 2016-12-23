@@ -257,6 +257,43 @@ describe('jss-nested', () => {
     })
   })
 
+  describe('order of nested conditionals', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          '@media a': {
+            color: 'red'
+          },
+          '@media b': {
+            color: 'green'
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('@media a')).to.not.be(undefined)
+      expect(sheet.getRule('@media b')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '@media a {\n' +
+        '  .a-id {\n' +
+        '    color: red;\n' +
+        '  }\n' +
+        '}\n' +
+        '@media b {\n' +
+        '  .a-id {\n' +
+        '    color: green;\n' +
+        '  }\n' +
+        '}'
+      )
+    })
+  })
+
   describe('adding a rule with a conditional rule', () => {
     let sheet
 
