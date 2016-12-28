@@ -4,15 +4,14 @@ Make sure you read [how to use
 plugins](https://github.com/cssinjs/jss/blob/master/docs/setup.md#setup-with-plugins)
 in general.
 
-[Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested) -
-[JSS](https://github.com/cssinjs/jss)
+[Demo](http://cssinjs.github.io/examples/index.html#plugin-jss-nested)
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
 
-### Use `&` to reference selector of the parent rule.
+## Use `&` to reference selector of the parent rule.
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   container: {
     padding: 20,
     '&:hover': {
@@ -31,8 +30,10 @@ const sheet = jss.createStyleSheet({
       border: '1px solid red'
     }
   }
-})
+}
 ```
+
+Compiles to:
 
 ```css
 .container-3775999496 {
@@ -52,10 +53,10 @@ const sheet = jss.createStyleSheet({
 }
 ```
 
-### Use `$ruleName` to reference a local rule within the same style sheet.
+## Use `$ruleName` to reference a local rule within the same style sheet.
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   container: {
     // Reference the local rule "button".
     '& $button': {
@@ -72,8 +73,10 @@ const sheet = jss.createStyleSheet({
   button: {
     color: 'grey'
   }
-})
+}
 ```
+
+Compiles to:
 
 ```css
 .button-3940538223 {
@@ -90,18 +93,20 @@ const sheet = jss.createStyleSheet({
 }
 ```
 
-### Use at-rules inside of regular rules.
+## Use at-rules inside of regular rules.
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   button: {
     color: 'red',
     '@media (min-width: 1024px)': {
       width: 200
     }
   }
-})
+}
 ```
+
+Compiles to:
 
 ```css
 .button-2683044438 {
@@ -114,10 +119,10 @@ const sheet = jss.createStyleSheet({
 }
 ```
 
-### Deep nesting
+## Deep nesting
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   button: {
     '&$warn': {
       color: 'red',
@@ -128,8 +133,10 @@ const sheet = jss.createStyleSheet({
     }
   },
   warn: {}
-})
+}
 ```
+
+Compiles to:
 
 ```css
 .button-274964227.warn-2315792072 {
