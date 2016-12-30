@@ -245,13 +245,13 @@ describe('jss-nested', () => {
         '.a-id {\n' +
         '  color: green;\n' +
         '}\n' +
-        '.b-id {\n' +
-        '  color: red;\n' +
-        '}\n' +
         '@media {\n' +
         '  .a-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +
+        '}\n' +
+        '.b-id {\n' +
+        '  color: red;\n' +
         '}'
       )
     })
@@ -326,7 +326,7 @@ describe('jss-nested', () => {
     })
   })
 
-  describe('merge nested conditional to container conditional with existing rule', () => {
+  describe('do not merge nested conditional to container conditional with existing rule', () => {
     let sheet
 
     beforeEach(() => {
@@ -335,6 +335,9 @@ describe('jss-nested', () => {
           color: 'green',
           '@media': {
             width: '200px'
+          },
+          '@media large': {
+            width: '300px'
           }
         },
         '@media': {
@@ -360,11 +363,18 @@ describe('jss-nested', () => {
         '  color: green;\n' +
         '}\n' +
         '@media {\n' +
-        '  .b-id {\n' +
-        '    color: blue;\n' +
-        '  }\n' +
         '  .a-id {\n' +
         '    width: 200px;\n' +
+        '  }\n' +
+        '}\n' +
+        '@media large {\n' +
+        '  .a-id {\n' +
+        '    width: 300px;\n' +
+        '  }\n' +
+        '}\n' +
+        '@media {\n' +
+        '  .b-id {\n' +
+        '    color: blue;\n' +
         '  }\n' +
         '}\n' +
         '.c-id {\n' +
@@ -458,14 +468,16 @@ describe('jss-nested', () => {
         '  color: green;\n' +
         '  background-color: aqua;\n' +
         '}\n' +
+        '@media {\n' +
+        '  .button-id {\n' +
+        '    width: 200px;\n' +
+        '  }\n' +
+        '}\n' +
         '.redButton-id {\n' +
         '  color: red;\n' +
         '  background-color: aqua;\n' +
         '}\n' +
         '@media {\n' +
-        '  .button-id {\n' +
-        '    width: 200px;\n' +
-        '  }\n' +
         '  .redButton-id {\n' +
         '    width: 200px;\n' +
         '  }\n' +

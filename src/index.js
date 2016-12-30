@@ -21,31 +21,6 @@ export default function jssNested() {
     }
   }
 
-  function addConditional(name, rule, container) {
-    const conditionalContainer = container.getRule(name)
-
-    if (!conditionalContainer) {
-      // Add conditional to container because it does not exist yet.
-      container.addRule(name, {[rule.name]: rule.style[name]})
-      return
-    }
-
-    // It exists, so now check if we have already defined styles
-    // for example @media print { .some-style { display: none; } } .
-    const ruleToExtend = conditionalContainer.getRule(rule.name)
-
-    if (ruleToExtend) {
-      ruleToExtend.style = {
-        ...ruleToExtend.style,
-        ...rule.style[name]
-      }
-      return
-    }
-
-    // Conditional rule in container has no rule so create it.
-    conditionalContainer.addRule(rule.name, rule.style[name])
-  }
-
   const hasAnd = str => str.indexOf('&') !== -1
 
   function replaceParentRefs(nestedProp, parentProp) {
@@ -94,9 +69,9 @@ export default function jssNested() {
 
       if (!isNested && !isNestedConditional) continue
 
-      if (isNested) {
-        options = getOptions(rule, container, options)
+      options = getOptions(rule, container, options)
 
+      if (isNested) {
         let selector = replaceParentRefs(prop, rule.selector)
         // Lazily create the ref replacer function just once for
         // all nested rules within the sheet.
@@ -107,7 +82,8 @@ export default function jssNested() {
         container.addRule(selector, rule.style[prop], {...options, selector})
       }
       else if (isNestedConditional) {
-        addConditional(prop, rule, container)
+        // Place conditional right after the parent rule to ensure right ordering.
+        container.addRule(prop, {[rule.name]: rule.style[prop]}, options)
       }
 
       delete rule.style[prop]
