@@ -1,3 +1,7 @@
+## 3.0.1 / 2016-12-31
+
+- Fixed order of nested media queries cssinjs/jss#391
+
 ## 3.0.0 / 2016-12-09
 
 - remove dep to named option
