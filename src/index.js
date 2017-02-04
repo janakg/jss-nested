@@ -16,7 +16,7 @@ export default function jssNested() {
     return (match, name) => {
       const rule = container.getRule(name)
       if (rule) return rule.selector
-      warning(false, '[JSS] Could not find the referenced rule %s in %s.', name, container.options.meta)
+      warning(false, '[JSS] Could not find the referenced rule %s in %s.', name, container.options.meta || container)
       return name
     }
   }
