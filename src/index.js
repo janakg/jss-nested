@@ -57,13 +57,13 @@ export default function jssNested() {
     }
   }
 
-  return (rule) => {
-    if (rule.type !== 'regular') return
+  function onProcessStyle(style, rule) {
+    if (rule.type !== 'regular') return style
     const container = rule.options.parent
     let options
     let replaceRef
 
-    for (const prop in rule.style) {
+    for (const prop in style) {
       const isNested = hasAnd(prop)
       const isNestedConditional = prop[0] === '@'
 
@@ -79,14 +79,18 @@ export default function jssNested() {
         // Replace all $refs.
         selector = selector.replace(refRegExp, replaceRef)
 
-        container.addRule(selector, rule.style[prop], {...options, selector})
+        container.addRule(selector, style[prop], {...options, selector})
       }
       else if (isNestedConditional) {
         // Place conditional right after the parent rule to ensure right ordering.
-        container.addRule(prop, {[rule.name]: rule.style[prop]}, options)
+        container.addRule(prop, {[rule.name]: style[prop]}, options)
       }
 
-      delete rule.style[prop]
+      delete style[prop]
     }
+
+    return style
   }
+
+  return {onProcessStyle}
 }
