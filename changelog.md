@@ -1,3 +1,7 @@
+## 4.0.0 / 2017-014-10
+
+- Support jss@7
+
 ## 3.0.1 / 2016-12-31
 
 - Fixed order of nested media queries cssinjs/jss#391
