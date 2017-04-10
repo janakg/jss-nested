@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import expect from 'expect.js'
+import {stripIndent} from 'common-tags'
 import nested from './'
 import jssExtend from 'jss-extend'
 import {create} from 'jss'
@@ -392,7 +393,7 @@ describe('jss-nested', () => {
         }
       })
 
-      expect(warning).to.be('[JSS] Could not find the referenced rule %s. \r\n%s')
+      expect(warning).to.be('[JSS] Could not find the referenced rule %s in %s.')
     })
   })
 
@@ -585,6 +586,31 @@ describe('jss-nested', () => {
         'input:focus + .a-id {\n' +
         '  color: red;\n' +
         '}'
+      )
+    })
+  })
+
+  describe('function values', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          '&:hover': {
+            color: () => 'red'
+          }
+        }
+      })
+      sheet.update()
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        stripIndent`
+          .a-id:hover {
+            color: red;
+          }
+        `
       )
     })
   })
