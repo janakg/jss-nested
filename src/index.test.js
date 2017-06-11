@@ -7,7 +7,7 @@ import jssExtend from 'jss-extend'
 import {create} from 'jss'
 
 const settings = {
-  generateClassName: (rule) => `${rule.name}-id`
+  createGenerateClassName: () => (rule) => `${rule.key}-id`
 }
 
 describe('jss-nested', () => {
