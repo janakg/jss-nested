@@ -13,16 +13,16 @@ const refRegExp = /\$([\w-]+)/g
 export default function jssNested() {
   // Get a function to be used for $ref replacement.
   function getReplaceRef(container) {
-    return (match, name) => {
-      const rule = container.getRule(name)
+    return (match, key) => {
+      const rule = container.getRule(key)
       if (rule) return rule.selector
       warning(
         false,
         '[JSS] Could not find the referenced rule %s in %s.',
-        name,
+        key,
         container.options.meta || container
       )
-      return name
+      return key
     }
   }
 
@@ -63,11 +63,10 @@ export default function jssNested() {
   }
 
   function onProcessStyle(style, rule) {
-    if (rule.type !== 'regular') return style
+    if (rule.type !== 'style') return style
     const container = rule.options.parent
     let options
     let replaceRef
-
     for (const prop in style) {
       const isNested = hasAnd(prop)
       const isNestedConditional = prop[0] === '@'
@@ -88,7 +87,7 @@ export default function jssNested() {
       }
       else if (isNestedConditional) {
         // Place conditional right after the parent rule to ensure right ordering.
-        container.addRule(prop, {[rule.name]: style[prop]}, options)
+        container.addRule(prop, {[rule.key]: style[prop]}, options)
       }
 
       delete style[prop]
