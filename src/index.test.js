@@ -597,21 +597,28 @@ describe('jss-nested', () => {
       sheet = jss.createStyleSheet({
         a: {
           '&:hover': {
-            color: () => 'red'
+            color: ({color}) => color
           }
         }
       })
-      sheet.update()
     })
 
-    it('should generate correct CSS', () => {
-      expect(sheet.toString()).to.be(
-        stripIndent`
-          .a-id:hover {
-            color: red;
-          }
-        `
-      )
+    it('should generate color red', () => {
+      sheet.update({color: 'red'})
+      expect(sheet.toString()).to.be(stripIndent`
+        .a-id:hover {
+          color: red;
+        }
+      `)
+    })
+
+    it('should generate color green', () => {
+      sheet.update({color: 'green'})
+      expect(sheet.toString()).to.be(stripIndent`
+        .a-id:hover {
+          color: green;
+        }
+      `)
     })
   })
 })
