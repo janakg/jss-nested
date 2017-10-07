@@ -258,6 +258,36 @@ describe('jss-nested', () => {
     })
   })
 
+  describe('nesting a conditional rule inside of a nested rule', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        a: {
+          '&:hover': {
+            color: 'red',
+            '@media': {
+              color: 'green'
+            }
+          }
+        }
+      })
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(stripIndent`
+        .a-id:hover {
+          color: red;
+        }
+        @media {
+          .a-id:hover {
+            color: green;
+          }
+        }
+      `)
+    })
+  })
+
   describe('order of nested conditionals', () => {
     let sheet
 

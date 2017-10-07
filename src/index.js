@@ -86,8 +86,10 @@ export default function jssNested() {
         container.addRule(selector, style[prop], {...options, selector})
       }
       else if (isNestedConditional) {
-        // Place conditional right after the parent rule to ensure right ordering.
-        container.addRule(prop, {[rule.key]: style[prop]}, options)
+        container
+          // Place conditional right after the parent rule to ensure right ordering.
+          .addRule(prop, null, options)
+          .addRule(rule.key, style[prop], {selector: rule.selector})
       }
 
       delete style[prop]
