@@ -626,6 +626,7 @@ describe('jss-nested', () => {
     beforeEach(() => {
       sheet = jss.createStyleSheet({
         a: {
+          color: ({color}) => color,
           '&:hover': {
             color: ({color}) => color
           }
@@ -636,6 +637,9 @@ describe('jss-nested', () => {
     it('should generate color red', () => {
       sheet.update({color: 'red'})
       expect(sheet.toString()).to.be(stripIndent`
+        .a-id {
+          color: red;
+        }
         .a-id:hover {
           color: red;
         }
@@ -645,6 +649,9 @@ describe('jss-nested', () => {
     it('should generate color green', () => {
       sheet.update({color: 'green'})
       expect(sheet.toString()).to.be(stripIndent`
+        .a-id {
+          color: green;
+        }
         .a-id:hover {
           color: green;
         }
