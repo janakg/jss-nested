@@ -3,7 +3,7 @@ import warning from 'warning'
 const separatorRegExp = /\s*,\s*/g
 const parentRegExp = /&/g
 const refRegExp = /\$([\w-]+)/g
-
+const isObject = obj => obj && typeof obj === 'object' && !Array.isArray(obj)
 /**
  * Convert nested rules to separate, remove them from original styles.
  *
@@ -62,6 +62,13 @@ export default function jssNested() {
     }
   }
 
+  function onChangeValue(value, prop, rule) {
+    if (isObject(value)) {
+      return onProcessStyle(value, rule)
+    }
+    return value;
+  }
+
   function onProcessStyle(style, rule) {
     if (rule.type !== 'style') return style
     const container = rule.options.parent
@@ -98,5 +105,5 @@ export default function jssNested() {
     return style
   }
 
-  return {onProcessStyle}
+  return { onProcessStyle, onChangeValue}
 }
